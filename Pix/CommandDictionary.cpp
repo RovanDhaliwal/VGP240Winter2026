@@ -8,6 +8,7 @@
 #include "CmdBeginDraw.h"
 #include "CmdEndDraw.h"
 #include "CmdVertex.h"
+#include "CmdSetViewport.h"
 
 CommandDictionary* CommandDictionary::Get()
 {
@@ -39,6 +40,8 @@ CommandDictionary::CommandDictionary()
 
 
 	RegisterCommand<CmdVertex>();
+
+	RegisterCommand<CmdSetViewport>();
 }
 
 TextEditor::LanguageDefinition CommandDictionary::GenerateLanguageDefinition()

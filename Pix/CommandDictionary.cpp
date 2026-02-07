@@ -9,6 +9,7 @@
 #include "CmdEndDraw.h"
 #include "CmdVertex.h"
 #include "CmdSetViewport.h"
+#include "CmdMatrixStack.h"
 
 CommandDictionary* CommandDictionary::Get()
 {
@@ -42,6 +43,15 @@ CommandDictionary::CommandDictionary()
 	RegisterCommand<CmdVertex>();
 
 	RegisterCommand<CmdSetViewport>();
+
+	//Matrix stack commands
+	RegisterCommand<CmdPushTranslation>();
+	RegisterCommand<CmdPushRotationX>();
+	RegisterCommand<CmdPushRotationY>();
+	RegisterCommand<CmdPushRotationZ>();
+	RegisterCommand<CmdPushScaling>();
+	RegisterCommand<CmdPopMatrix>();
+	
 }
 
 TextEditor::LanguageDefinition CommandDictionary::GenerateLanguageDefinition()

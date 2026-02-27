@@ -3,6 +3,7 @@
 #include "Clipper.h"
 #include "MatrixStack.h"
 #include "Camera.h"
+#include "LightManager.h"
 
 extern float gResolutionX;
 extern float gResolutionY;
@@ -95,9 +96,10 @@ bool PrimitivesManager::EndDraw()
 	Matrix4 matView = Camera::Get()->GetViewMatrix();
 	Matrix4 matProj = Camera::Get()->GetProjectionMatrix();
 	Matrix4 matScreen = GetScreenTransform();
-	Matrix4 matNDC = matWorld * matView * matProj;
+	Matrix4 matNDC = matView * matProj;
 
 	Rasterizer* rasterizer = Rasterizer::Get();
+	LightManager* lm = LightManager::Get();
 	switch (mTopology)
 	{
 	case Topology::Point:
@@ -129,7 +131,16 @@ bool PrimitivesManager::EndDraw()
 			std::vector<Vertex> triangle = { mVertexBuffer[i - 2], mVertexBuffer[i - 1], mVertexBuffer[i] };
 			if (mApplyTransform)
 			{
-
+				//convert triangle position to world space
+				for (uint32_t v = 0; v < triangle.size(); ++v)
+				{
+					triangle[v].pos = MathHelper::TransformCoord(triangle[v].pos, matWorld);
+				}
+				Vector3 faceNormal = CreateFaceNormal(triangle);
+				for (uint32_t v = 0; v < triangle.size(); ++v)
+				{
+					triangle[v].color *= lm->ComputeLightColor(triangle[v].pos, faceNormal);
+				}
 				//convert triangle positions to NDC space
 				for(uint32_t v = 0; v < triangle.size(); ++v)
 				{
@@ -150,7 +161,7 @@ bool PrimitivesManager::EndDraw()
 					MathHelper::FlattenVectorScreenCoord(triangle[v].pos);
 				}
 			}
-			if (!Clipper::Get()->ClipTriangle(triangle))
+			//if (!Clipper::Get()->ClipTriangle(triangle))
 			{
 				for (uint32_t v = 2; v < triangle.size(); ++v)
 				{

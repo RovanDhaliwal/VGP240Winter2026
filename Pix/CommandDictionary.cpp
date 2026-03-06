@@ -15,6 +15,12 @@
 #include "CmdSetCullMode.h"
 #include "CmdEnableDepthBuffer.h"
 
+#include "CmdLights.h"
+
+#include "CmdSetTexture.h"
+#include "CmdSetCorrectUV.h"
+#include "CmdSetAddressMode.h"
+
 CommandDictionary* CommandDictionary::Get()
 {
 	static CommandDictionary sInstance;
@@ -60,6 +66,17 @@ CommandDictionary::CommandDictionary()
 
 	RegisterCommand<CmdSetCullMode>();
 	RegisterCommand<CmdEnableDepthBuffer>();
+
+	RegisterCommand<CmdSetLightAmbient>();
+	RegisterCommand<CmdSetLightDiffuse>();
+	RegisterCommand<CmdSetLightSpecular>();
+	RegisterCommand<CmdAddDirectionalLight>();
+	RegisterCommand<CmdAddPointLight>();
+	RegisterCommand<CmdAddSpotLight>();
+
+	RegisterCommand<CmdSetTexture>();
+	RegisterCommand<CmdSetCorrectUV>();
+	RegisterCommand<CmdSetAddressMode>();
 	
 }
 

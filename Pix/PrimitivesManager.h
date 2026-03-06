@@ -24,6 +24,7 @@ public:
 
 	void OnNewFrame();
 	void SetCullMode(CullMode mode);
+	void SetCorrectUV(bool correctUV);
 
 	// Start accepting values
 	bool BeginDraw(Topology topology, bool applyTransform = false);
@@ -40,4 +41,5 @@ private:
 	CullMode mCullMode = CullMode::None;
 	bool mDrawBegin = false;
 	bool mApplyTransform = false;
+	bool mCorrectUV = false;
 };

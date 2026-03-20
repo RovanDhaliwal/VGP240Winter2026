@@ -34,6 +34,10 @@ void TextureManager::SetAddressMode(AddressMode mode)
 {
 	mAddressMode = mode;
 }
+void TextureManager::SetUseFilter(bool useFilter) 
+{
+	mUseFilter = useFilter; 
+}
 
 X::Color TextureManager::SampleColor(const X::Color& uv) const
 {

@@ -36,6 +36,28 @@ namespace
         return newStride;
     }
 #pragma pack(pop)
+
+    X::Color GetBilinearFilteredPixel(const Texture& tex, float u, float v)
+    {
+        float uTex = u * static_cast<float>(tex.GetWidth());
+		float vTex = v * static_cast<float>(tex.GetHeight());
+
+		int uTexInt = static_cast<int>(uTex);
+		int vTexInt = static_cast<int>(vTex);
+
+        float uRatio = uTex - static_cast<float>(uTexInt);
+        float vRatio = vTex - static_cast<float>(vTexInt);
+
+        float uInverse = 1.0f - uRatio;
+		float vInverse = 1.0f - vRatio;
+
+        X::Color a = tex.GetPixel(uTexInt, vTexInt) * uInverse;
+        X::Color b = tex.GetPixel(uTexInt + 1, vTexInt) * uRatio;
+		X::Color c = tex.GetPixel(uTexInt, vTexInt + 1) * uInverse;
+        X::Color d = tex.GetPixel(uTexInt + 1, vTexInt + 1) * uRatio;
+
+		return (a + b) * vInverse + (c + d) * vRatio;
+    }
 }
 
 void Texture::Load(const std::string& fileName)
@@ -92,7 +114,7 @@ const std::string& Texture::GetFileName() const
 {
     return mFileName;
 }
-X::Color Texture::GetPixel(float u, float v, AddressMode addressMode) const
+X::Color Texture::GetPixel(float u, float v, bool filter, AddressMode addressMode) const
 {
     switch (addressMode)
     {
@@ -128,7 +150,13 @@ X::Color Texture::GetPixel(float u, float v, AddressMode addressMode) const
 			while (v < 0.0f) { v += 2.0f; }
 			v = (v > 1.0f) ? (2.0f - v) : v;
         }
+		break;
     }
+    if(filter)
+    {
+        return GetBilinearFilteredPixel(*this, u, v);
+	}
+
 	int uIndex = static_cast<int>(u * (mWidth - 1));
 	int vIndex = static_cast<int>(u * (mHeight - 1));
     return GetPixel(uIndex, vIndex);
